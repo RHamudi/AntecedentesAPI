@@ -1,13 +1,26 @@
+from contextlib import asynccontextmanager
 import shutil
-from typing import Union
 import os
 from uuid import uuid4
-from fastapi import FastAPI, UploadFile, File
+from fastapi import Depends, FastAPI, UploadFile, File
 from task import process_file
+from db.models.user import User
+from sqlalchemy.orm import Session
+from db.config.postgress import Base, engine, SessionLocal
 
+UPLOAD_FOLDER = "uploads"
+
+
+Base.metadata.create_all(bind=engine)
+# Dependência para obter a sessão do banco de dados
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 app = FastAPI()
-UPLOAD_FOLDER = "uploads"
 
 @app.post("/upload/")
 def upload_excel(file: UploadFile = File(...)):
@@ -22,7 +35,11 @@ def upload_excel(file: UploadFile = File(...)):
     process_file.delay(task_id)
 
     return {"task_id": task_id, "message": "Arquivo enviado, processamento em andamento"}
-    
+
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
 
 # @app.get("/executar/{id}")
 # def read_root(id: str):
