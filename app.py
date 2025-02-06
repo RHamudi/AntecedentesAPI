@@ -2,9 +2,10 @@ from contextlib import asynccontextmanager
 import shutil
 import os
 from uuid import uuid4
-from fastapi import Depends, FastAPI, UploadFile, File
+from fastapi import Depends, FastAPI, HTTPException, UploadFile, File
 from task import process_file
 from db.models.user import User
+from db.schemas import schemas
 from sqlalchemy.orm import Session
 from db.config.postgress import Base, engine, SessionLocal
 
@@ -40,6 +41,21 @@ def upload_excel(file: UploadFile = File(...)):
 def get_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
     return users
+
+@app.post("/users")
+def create_user(request: schemas.UserCreate, db: Session = Depends(get_db)):
+    # Verifica se o e-mail já está cadastrado
+    db_user = db.query(User).filter(User.email == request.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="E-mail já cadastrado")
+    
+    # Cria o novo usuário
+    new_user = User(name=request.name, email=request.email, senha=request.senha)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    return new_user
 
 # @app.get("/executar/{id}")
 # def read_root(id: str):
