@@ -3,6 +3,7 @@ import shutil
 import os
 from uuid import uuid4
 from fastapi import Depends, FastAPI, HTTPException, UploadFile, File
+from sqlalchemy import and_
 from task import process_file
 from db.models.user import User
 from db.schemas import schemas
@@ -57,22 +58,10 @@ def create_user(request: schemas.UserCreate, db: Session = Depends(get_db)):
     
     return new_user
 
-# @app.get("/executar/{id}")
-# def read_root(id: str):
-#     try:
-#         resultado = subprocess.run(["python", f'script/final.py', id], capture_output=True, text=True)
-#         return {"saida": resultado.stdout, "erro": resultado.stderr}
-#     except Exception as e:
-#         return {"erro": str(e)}
-
-
-# @celery_app.task(name='app.process_file')
-# def process_file(file_id):
-#     try:
-#         subprocess.run(["python", f'script/final.py', file_id], capture_output=True, text=True)
-
-#         # redis_client.set(f"task:{file_id}", "concluído")
-
-#     except Exception as e:
-#         # redis_client.set(f"task:{file_id}", "Erro")
-#         raise e
+@app.post("/login")
+def authenticate(request: schemas.LoginUser, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(and_(User.email == request.email, User.senha == request.senha)).first()
+    if not db_user:
+        raise HTTPException(status_code=400, detail="E-mail ou senha invalida")
+    
+    return {"message": "Usuario authenticado com sucesso"}

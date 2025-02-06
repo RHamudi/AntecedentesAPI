@@ -1,3 +1,6 @@
 venv/
 __pycache/
 __pycache__
+downloaded_files
+uploads
+dev.sh

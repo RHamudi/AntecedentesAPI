@@ -13,3 +13,10 @@ class UserResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+class LoginUser(BaseModel):
+    email: str
+    senha: str
+    
+    class Config:
+        orm_mode: True
