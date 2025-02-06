@@ -94,8 +94,10 @@ for index, row in df.iterrows():
     driver.quit()
 
 if cpfs_pulados:
+    file_certs = os.path.join("uploads", file_id)
     df_pulados = pd.DataFrame(cpfs_pulados, columns=["CPF", "Nome", "Data Nascimento", "Nome Mãe"])
-    df_pulados.to_excel("cpfs_pulados.xlsx", index=False)
+    file_path = os.path.join(file_certs, "cpfs_pulados.xlsx")
+    df_pulados.to_excel(file_path, index=False)
     print("CPFs pulados foram salvos em 'cpfs_pulados.xlsx'.")
 else:
     print("Nenhum CPF foi pulado.")
