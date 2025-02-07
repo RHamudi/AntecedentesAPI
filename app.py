@@ -75,7 +75,7 @@ def authenticate(request: schemas.LoginUser, db: Session = Depends(get_db)):
 
 @app.get("/uploads/{id}/certificados")
 async def count_certificates(id: str):
-    directory = f"uploads/{id}"
+    directory = f"uploads/{id}/certificados"
     
     if not os.path.exists(directory) or not os.path.isdir(directory):
         return {"message": "Diretório não encontrado", "count": 0}
