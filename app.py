@@ -64,3 +64,14 @@ def authenticate(request: schemas.LoginUser, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="E-mail ou senha invalida")
     
     return {"message": "Usuario authenticado com sucesso"}
+
+@app.get("/uploads/{id}/certificados")
+async def count_certificates(id: str):
+    directory = f"uploads/{id}/certificados"
+    
+    if not os.path.exists(directory) or not os.path.isdir(directory):
+        return {"message": "Diretório não encontrado", "count": 0}
+
+    file_count = len([f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+    
+    return {"message": "Contagem realizada com sucesso", "count": file_count}
