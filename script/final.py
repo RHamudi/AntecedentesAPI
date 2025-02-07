@@ -1,4 +1,5 @@
 from datetime import datetime
+import subprocess
 from seleniumbase import Driver
 from selenium.webdriver.common.by import By
 from seleniumbase.common.exceptions import NoSuchElementException
@@ -31,6 +32,7 @@ df = pd.read_excel(file_path, engine="openpyxl", dtype={'CPF': str})
 cpfs_pulados = []
 
 for index, row in df.iterrows():
+      # Define o display virtual
     driver = iniciar_driver()
     driver.uc_open_with_reconnect(url, reconnect_time=6)
     driver.uc_gui_click_captcha()

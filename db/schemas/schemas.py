@@ -12,11 +12,11 @@ class UserResponse(BaseModel):
     senha: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class LoginUser(BaseModel):
     email: str
     senha: str
     
     class Config:
-        orm_mode: True
+        from_attributes: True

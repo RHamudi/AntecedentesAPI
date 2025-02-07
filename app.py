@@ -12,7 +12,6 @@ from db.config.postgress import Base, engine, SessionLocal
 
 UPLOAD_FOLDER = "uploads"
 
-
 Base.metadata.create_all(bind=engine)
 # Dependência para obter a sessão do banco de dados
 def get_db():
