@@ -28,14 +28,22 @@ def upload_excel(file: UploadFile = File(...)):
     task_id = str(uuid4())  # Gera um ID único para a tarefa
     task_folder = os.path.join(UPLOAD_FOLDER, task_id)
     os.makedirs(task_folder, exist_ok=True)  # Cria uma pasta para a tarefa
-    
+
     file_path = os.path.join(task_folder, file.filename)
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
 
-    process_file.delay(task_id)
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    return {"task_id": task_id, "message": "Arquivo enviado, processamento em andamento"}
+        # Verifica se o arquivo realmente foi salvo e não está vazio
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+            # Chama o processamento assíncrono
+            process_file.delay(task_id)
+            return {"task_id": task_id, "message": "Arquivo enviado, processamento em andamento"}
+        else:
+            return {"error": "Falha ao salvar o arquivo"}
+    except Exception as e:
+        return {"error": f"Erro ao salvar o arquivo: {str(e)}"}
 
 @app.get("/users")
 def get_users(db: Session = Depends(get_db)):
@@ -67,7 +75,7 @@ def authenticate(request: schemas.LoginUser, db: Session = Depends(get_db)):
 
 @app.get("/uploads/{id}/certificados")
 async def count_certificates(id: str):
-    directory = f"uploads/{id}/certificados"
+    directory = f"uploads/{id}"
     
     if not os.path.exists(directory) or not os.path.isdir(directory):
         return {"message": "Diretório não encontrado", "count": 0}
