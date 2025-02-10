@@ -16,13 +16,15 @@ pasta_download = os.path.join(os.getcwd(), "downloaded_files")
 # Configura o argumento via CLI
 parser = argparse.ArgumentParser(description="Processar um arquivo Excel.")
 parser.add_argument("file_id", type=str, help="ID do diretório onde está o arquivo")
+parser.add_argument("file_name", type=str, help="Nome do arquivo a ser processado")
 
 # Pega o argumento passado
 args = parser.parse_args()
 file_id = args.file_id  # Esse é o ID recebido
+file_name = args.file_name
 
 # Monta o caminho correto
-file_path = os.path.join("uploads", file_id, "dados.xlsx")
+file_path = os.path.join("uploads", file_id, file_name)
 
 # Verifica se o arquivo existe antes de tentar abrir
 if not os.path.exists(file_path):
@@ -53,7 +55,7 @@ for index, row in df.iterrows():
         continue
 
     try:
-        cpf_input = driver.find_element('pf-input-cpf input[type="text"]')
+        cpf_input = driver.find_element("input.p-inputmask")
         cpf_input.send_keys(cpf)
         nome_input = driver.find_element('[formcontrolname="nome"]')
         nome_input.send_keys(nome)

@@ -1,4 +1,5 @@
 celery -A task worker -l info --pool=solo
+uvicorn app:app --host 0.0.0.0 --port $PORT
 celery -A task flower --address=127.0.0.6 --port=5566
 fastapi dev app.py
 cmd /k venv\Scripts\activate.bat
