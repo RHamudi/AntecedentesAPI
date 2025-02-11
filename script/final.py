@@ -55,7 +55,7 @@ for index, row in df.iterrows():
         continue
 
     try:
-        cpf_input = driver.find_element("input.p-inputmask")
+        cpf_input = driver.wait_for_element("input.p-inputmask.p-inputtext.p-component")
         cpf_input.send_keys(cpf)
         nome_input = driver.find_element('[formcontrolname="nome"]')
         nome_input.send_keys(nome)
