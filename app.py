@@ -60,35 +60,7 @@ def upload_excel(idUser: int,file: UploadFile = File(...), db: Session = Depends
             return {"error": "Falha ao salvar o arquivo"}
     except Exception as e:
         return {"error": f"Erro ao salvar o arquivo: {str(e)}"}
-
-@app.get("/users")
-def get_users(db: Session = Depends(get_db)):
-    users = db.query(User).all()
-    return users
-
-@app.post("/users")
-def create_user(request: schemas.UserCreate, db: Session = Depends(get_db)):
-    # Verifica se o e-mail já está cadastrado
-    db_user = db.query(User).filter(User.email == request.email).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="E-mail já cadastrado")
     
-    # Cria o novo usuário
-    new_user = User(name=request.name, email=request.email, senha=request.senha)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    
-    return new_user
-
-@app.post("/login")
-def authenticate(request: schemas.LoginUser, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(and_(User.email == request.email, User.senha == request.senha)).first()
-    if not db_user:
-        raise HTTPException(status_code=400, detail="E-mail ou senha invalida")
-    
-    return {"message": "Usuario authenticado com sucesso","idUser": db_user.id}
-
 @app.get("/uploads/{id}/download")
 async def download_certificates(id: str):
     base_directory = f"uploads/{id}"
@@ -118,4 +90,30 @@ def getTasks(id: str,db: Session = Depends(get_db)):
     tasks = db.query(Task).filter(Task.user == id).all()
     return tasks
 
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
 
+@app.post("/users")
+def create_user(request: schemas.UserCreate, db: Session = Depends(get_db)):
+    # Verifica se o e-mail já está cadastrado
+    db_user = db.query(User).filter(User.email == request.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="E-mail já cadastrado")
+    
+    # Cria o novo usuário
+    new_user = User(name=request.name, email=request.email, senha=request.senha)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    return new_user
+
+@app.post("/login")
+def authenticate(request: schemas.LoginUser, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(and_(User.email == request.email, User.senha == request.senha)).first()
+    if not db_user:
+        raise HTTPException(status_code=400, detail="E-mail ou senha invalida")
+    
+    return {"message": "Usuario authenticado com sucesso","idUser": db_user.id}
