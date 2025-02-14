@@ -1,5 +1,4 @@
 from datetime import datetime
-import subprocess
 from seleniumbase import Driver
 from selenium.webdriver.common.by import By
 from seleniumbase.common.exceptions import NoSuchElementException
@@ -60,7 +59,7 @@ for index, row in df.iterrows():
         nome_input = driver.find_element('[formcontrolname="nome"]')
         nome_input.send_keys(nome)
 
-        erro_cpf = driver.wait_for_element('span.p-confirm-dialog-message.ng-tns-c58-1', timeout=1)
+        erro_cpf = driver.wait_for_element('span.p-confirm-dialog-message.ng-tns-c58-1', timeout=4)
         if "Formato do CPF inválido." in erro_cpf.text:
             cpfs_pulados.append([cpf, nome, data_nasc, nome_mae])
             driver.quit()

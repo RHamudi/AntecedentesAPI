@@ -9,10 +9,11 @@ import os
 from db.config.postgress import SessionLocal
 from db.models.user import Task
 
-app = Celery('task', 
-            broker="rediss://red-cuik5j3qf0us73dqd4eg:7Dblq1wB3OB6EQ28I1kXsKcZ1N8dxYuy@oregon-redis.render.com:6379",
-            ssl=True,  # Habilita SSL
-            ssl_cert_reqs=None )
+app = Celery(
+    'tasks',
+    broker='redis://default:oVmpqjGJuf92rEgPIOsY8E992pquziwv@redis-14764.c9.us-east-1-4.ec2.redns.redis-cloud.com:14764/0',
+    backend='redis://default:oVmpqjGJuf92rEgPIOsY8E992pquziwv@redis-14764.c9.us-east-1-4.ec2.redns.redis-cloud.com:14764/0'
+)
 
 @app.task
 def process_file(file_id, file_name):
