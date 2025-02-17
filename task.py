@@ -19,7 +19,7 @@ app = Celery(
 def process_file(file_id, file_name):
     db: Session = SessionLocal()  
     try:
-        subprocess.run(["python", f'script/final.py', file_id, file_name], capture_output=True, text=True)
+        subprocess.run(["python", f'script/final1.py', file_id, file_name], capture_output=True, text=True)
         db_task = db.query(Task).filter(Task.id == file_id).first()
         if db_task:
             db_task.status = "Concluido"
