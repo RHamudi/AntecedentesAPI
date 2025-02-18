@@ -27,7 +27,7 @@ def iniciar_driver():
 )
 
 url = "https://servicos.pf.gov.br/epol-sinic-publico/"
-pasta_download = os.path.join(r'C:\Users\Administrator\Downloads')
+pasta_download = os.path.join(r'/root/Downloads')
 # Configura o argumento via CLI
 parser = argparse.ArgumentParser(description="Processar um arquivo Excel.")
 parser.add_argument("file_id", type=str, help="ID do diretório onde está o arquivo")
